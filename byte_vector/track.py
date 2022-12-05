@@ -23,6 +23,10 @@ class KnnParamSource:
         self._iters = 0
         self.infinite = True
 
+        for q in range(len(self._queries)):
+           for i in range(len(self._queries[q])):
+              self._queries[q][i] = round(self._queries[q][i]*127)
+
     def partition(self, partition_index, total_partitions):
         return self
 
@@ -53,7 +57,6 @@ class KnnParamSource:
                 "_source": False,
             }
         self._iters += 1
-        #print("ITERATIONS: %i", self._iters)
         return result
 
 
