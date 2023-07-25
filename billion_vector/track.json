@@ -1,0 +1,90 @@
+{
+  "version": 2,
+  "description": "Benchmark for a billion dense vectors indexing and search",
+  "indices": [
+    {
+      "name": "vectors",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "billion-vector",
+      "documents": [
+        {
+          "source-file": "data/documents.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 7283213
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "name": "knn-search-10-100",
+      "operation-type": "search",
+      "param-source": "knn-param-source",
+      "k": 10,
+      "num-candidates": 100
+    }
+  ],
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "index-append",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(1000)}},
+        "ingest-percentage": 100
+      },
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(1)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "knn-search-10-100",
+      "operation": "knn-search-10-100",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    }
+  ]
+}
