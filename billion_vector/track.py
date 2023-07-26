@@ -15,7 +15,7 @@ class KnnParamSource:
         self._queries = []
 
         cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, "data/small/queries.json"), "r") as file:
+        with open(os.path.join(cwd, "data/large/queries.json"), "r") as file:
             for line in file:
                 self._queries.append(json.loads(line))
         self._iters = 0

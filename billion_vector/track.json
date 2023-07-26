@@ -12,9 +12,9 @@
       "name": "billion-vector",
       "documents": [
         {
-          "source-file": "data/small/documents.json",
-          "document-count": 10000,
-          "uncompressed-bytes": 7283213
+          "source-file": "data/large/documents.json",
+          "document-count": 1000000,
+          "uncompressed-bytes": 475347536585
         }
       ]
     }
