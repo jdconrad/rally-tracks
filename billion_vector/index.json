@@ -13,6 +13,7 @@
     "properties": {
       "vector": {
         "type": "dense_vector",
+        "element_type": "byte",
         "dims" : 128,
         "index" : true,
         "similarity": "l2_norm",
